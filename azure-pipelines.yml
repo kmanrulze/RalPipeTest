@@ -3,20 +3,39 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+  
 trigger:
-- master
-
+  branches:
+    include:
+    - master
+  paths:
+    include:
+      - my-dream-app/*
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+stages:
+- stage: Deploy_Angular
+  pool:
+    vmImage: 'windows-latest'
+  variables: 
+    appDir: my-dream-app
+  jobs:
+  - job: Build_And_Deploy_Angular
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '12.x'
+      displayName: 'Install Node.js'
+    
+    - task: Npm@1
+      inputs:
+        command: 'install'
+        workingDir: '$(appDir)'
+      
+    - script: ng build --prod
+      displayName: ng build --prod running
+      workingDirectory: $(appDir)
 
-- script: |
-    npm install -g @angular/cli
-    npm install
-    ng build --prod
-  displayName: 'npm install and build'
+
+
