@@ -33,7 +33,7 @@ stages:
         command: 'install'
         workingDir: '$(appDir)'
       
-    - script: ng build --prod
+    - script: npx ng build --prod
       displayName: ng build --prod running
       workingDirectory: $(appDir)
 
